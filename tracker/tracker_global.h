@@ -27,9 +27,9 @@
 #include "fdfs_http_shared.h"
 #endif
 
-#define TRACKER_SYNC_TO_FILE_FREQ		1000
-#define TRACKER_MAX_PACKAGE_SIZE		(8 * 1024)
-#define TRACKER_SYNC_STATUS_FILE_INTERVAL	300   //5 minute
+#define TRACKER_SYNC_TO_FILE_FREQ        1000
+#define TRACKER_MAX_PACKAGE_SIZE        (8 * 1024)
+#define TRACKER_SYNC_STATUS_FILE_INTERVAL    300   //5 minute
 
 #ifdef __cplusplus
 extern "C" {
