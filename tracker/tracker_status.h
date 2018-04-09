@@ -14,8 +14,8 @@
 #include <time.h>
 
 typedef struct {
-	time_t up_time;
-	time_t last_check_time;
+    time_t up_time;
+    time_t last_check_time;
 } TrackerStatus;
 
 #ifdef __cplusplus

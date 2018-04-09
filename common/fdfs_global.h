@@ -15,7 +15,7 @@
 #include "fdfs_define.h"
 #include "connection_pool.h"
 
-#define FDFS_FILE_EXT_NAME_MAX_LEN	6
+#define FDFS_FILE_EXT_NAME_MAX_LEN    6
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,8 +31,8 @@ extern int g_connection_pool_max_idle_time;
 
 int fdfs_check_data_filename(const char *filename, const int len);
 int fdfs_gen_slave_filename(const char *master_filename, \
-		const char *prefix_name, const char *ext_name, \
-		char *filename, int *filename_len);
+        const char *prefix_name, const char *ext_name, \
+        char *filename, int *filename_len);
 
 #ifdef __cplusplus
 }

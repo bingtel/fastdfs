@@ -39,6 +39,7 @@
 #define FDFS_ID_TYPE_SERVER_ID    1
 #define FDFS_ID_TYPE_IP_ADDRESS   2
 
+// `1` means `.`
 #define FDFS_NORMAL_LOGIC_FILENAME_LENGTH (FDFS_LOGIC_FILE_PATH_LEN + \
         FDFS_FILENAME_BASE64_LENGTH + FDFS_FILE_EXT_NAME_MAX_LEN + 1)
 
@@ -82,6 +83,7 @@
 #define FDFS_STORE_PATH_LOAD_BALANCE    2  //load balance
 
 //the mode of the files distributed to the data path
+// 上传的文件存储到二级目录的方式
 #define FDFS_FILE_DIST_PATH_ROUND_ROBIN    0  //round robin
 #define FDFS_FILE_DIST_PATH_RANDOM    1  //random
 
@@ -101,7 +103,6 @@
 #define FDFS_STORAGE_META_FILE_EXT           "-m"
 
 #define FDFS_APPENDER_FILE_SIZE  INFINITE_FILE_SIZE
-// 文件大小上限
 #define FDFS_TRUNK_FILE_MARK_SIZE  (512 * 1024LL * 1024 * 1024 * 1024 * 1024LL)
 
 #define FDFS_CHANGE_FLAG_TRACKER_LEADER    1  //tracker leader changed

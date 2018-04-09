@@ -23,13 +23,13 @@ extern "C" {
 /**
 load mime types from file
 params:
-	pHash: hash array to store the mime types, 
-		key is the file extension name, eg. jpg
-		value is the content type, eg. image/jpeg
-		the hash array will be initialized in this function,
-		the hash array should be destroyed when used done
-	mime_filename: the mime filename, 
-		file format is same as apache's file: mime.types
+    pHash: hash array to store the mime types,
+        key is the file extension name, eg. jpg
+        value is the content type, eg. image/jpeg
+        the hash array will be initialized in this function,
+        the hash array should be destroyed when used done
+    mime_filename: the mime filename,
+        file format is same as apache's file: mime.types
 return: 0 for success, !=0 for fail
 **/
 int load_mime_types_from_file(HashArray *pHash, const char *mime_filename);
