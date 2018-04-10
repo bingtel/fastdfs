@@ -381,8 +381,7 @@ typedef struct
     } chg_count;
 } TrackerClientInfo;
 
-typedef struct
-{
+typedef struct {
     char name[FDFS_MAX_META_NAME_LEN + 1];  //key
     char value[FDFS_MAX_META_VALUE_LEN + 1]; //value
 } FDFSMetaData;

@@ -484,6 +484,7 @@ int fdfs_dump_tracker_global_vars_to_file(const char *filename)
     FDFSGroupInfo **ppGroup;
     FDFSGroupInfo **ppGroupEnd;
 
+    // rw-r--r--
     fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
     if (fd < 0)
     {
