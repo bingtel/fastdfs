@@ -31,8 +31,10 @@
 #define TRACKER_STATUS_ITEM_UP_TIME        "up_time"
 #define TRACKER_STATUS_ITEM_LAST_CHECK_TIME    "last_check_time"
 
-int tracker_write_status_to_file(void *args)
-{
+/**
+ * 将Tracker的状态写入文件
+ * */
+int tracker_write_status_to_file(void *args) {
     char full_filename[MAX_PATH_SIZE];
     char buff[256];
     int len;
@@ -49,8 +51,11 @@ int tracker_write_status_to_file(void *args)
     return writeToFile(full_filename, buff, len);
 }
 
-int tracker_load_status_from_file(TrackerStatus *pStatus)
-{
+
+/**
+ * 从文件中恢复Tracker的状态
+ **/
+int tracker_load_status_from_file(TrackerStatus *pStatus) {
     char full_filename[MAX_PATH_SIZE];
     IniContext iniContext;
     int result;

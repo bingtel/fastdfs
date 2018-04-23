@@ -22,6 +22,7 @@
 #define FDFS_ONE_MB    (1024 * 1024)
 
 #define FDFS_GROUP_NAME_MAX_LEN        16
+// 每个group中最大的storage server数量
 #define FDFS_MAX_SERVERS_EACH_GROUP    32
 #define FDFS_MAX_GROUPS               512
 #define FDFS_MAX_TRACKERS        16
@@ -99,6 +100,7 @@
 #define FDFS_DOMAIN_NAME_MAX_SIZE    128
 
 #define FDFS_STORAGE_STORE_PATH_PREFIX_CHAR  'M'
+// 不足两位，前面补0输出
 #define FDFS_STORAGE_DATA_DIR_FORMAT         "%02X"
 #define FDFS_STORAGE_META_FILE_EXT           "-m"
 
@@ -395,10 +397,10 @@ typedef struct
     int upload_priority;
     int join_time; //storage join timestamp (create timestamp)
     int up_time;   //storage service started timestamp
-        char version[FDFS_VERSION_SIZE];   //storage version
+    char version[FDFS_VERSION_SIZE];   //storage version
     char group_name[FDFS_GROUP_NAME_MAX_LEN + 1];
-        char domain_name[FDFS_DOMAIN_NAME_MAX_SIZE];
-        char init_flag;
+    char domain_name[FDFS_DOMAIN_NAME_MAX_SIZE];
+    char init_flag;
     signed char status;
     int tracker_count;
     ConnectionInfo tracker_servers[FDFS_MAX_TRACKERS];
