@@ -352,8 +352,7 @@ static int tracker_check_and_sync(struct fast_task_info *pTask, \
     char *p;
 
     pClientInfo = (TrackerClientInfo *)pTask->arg;
-    if (status != 0 || pClientInfo->pGroup == NULL)
-    {
+    if (status != 0 || pClientInfo->pGroup == NULL) {
         pTask->length = sizeof(TrackerHeader);
         return status;
     }
@@ -361,10 +360,8 @@ static int tracker_check_and_sync(struct fast_task_info *pTask, \
     p = pTask->data + sizeof(TrackerHeader);
     pFlags = p++;
     *pFlags = 0;
-    if (g_if_leader_self)
-    {
-        if (pClientInfo->chg_count.tracker_leader != g_tracker_leader_chg_count)
-        {
+    if (g_if_leader_self) {
+        if (pClientInfo->chg_count.tracker_leader != g_tracker_leader_chg_count) {
             int leader_index;
 
             *pFlags |= FDFS_CHANGE_FLAG_TRACKER_LEADER;
@@ -373,8 +370,7 @@ static int tracker_check_and_sync(struct fast_task_info *pTask, \
             memset(p, 0, sizeof(FDFSStorageBrief));
 
             leader_index = g_tracker_servers.leader_index;
-            if (leader_index >= 0)
-            {
+            if (leader_index >= 0) {
                 ConnectionInfo *pTServer;
                 pTServer = g_tracker_servers.servers + leader_index;
                 snprintf(pDestServer->id, FDFS_STORAGE_ID_MAX_SIZE, \
