@@ -177,8 +177,7 @@ int tracker_service_init() {
     return 0;
 }
 
-int tracker_terminate_threads()
-{
+int tracker_terminate_threads() {
         struct nio_thread_data *pThreadData;
         struct nio_thread_data *pDataEnd;
         int quit_sock;
