@@ -33,6 +33,7 @@ int tracker_service_destroy();
 int tracker_terminate_threads();
 
 void tracker_accept_loop(int server_sock);
+// 处理通信任务
 int tracker_deal_task(struct fast_task_info *pTask);
 
 #ifdef __cplusplus

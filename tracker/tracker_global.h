@@ -27,6 +27,7 @@
 #include "fdfs_http_shared.h"
 #endif
 
+// tracker信息落地的频率
 #define TRACKER_SYNC_TO_FILE_FREQ        1000
 #define TRACKER_MAX_PACKAGE_SIZE        (8 * 1024)
 #define TRACKER_SYNC_STATUS_FILE_INTERVAL    300   //5 minute

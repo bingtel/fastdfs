@@ -119,6 +119,7 @@
 #define STORAGE_TRUNK_ALLOC_CONFIRM_REQ_BODY_LEN  (FDFS_GROUP_NAME_MAX_LEN \
             + sizeof(FDFSTrunkInfoBuff))
 
+// 协议头
 typedef struct
 {
     char pkg_len[FDFS_PROTO_PKG_LEN_SIZE];  //body length, not including header
@@ -126,6 +127,7 @@ typedef struct
     char status; //status code for response
 } TrackerHeader;
 
+// storage server将自身信息push给tracker
 typedef struct
 {
     char group_name[FDFS_GROUP_NAME_MAX_LEN+1];
@@ -200,11 +202,11 @@ typedef struct
 
 typedef struct
 {
-        unsigned char store_path_index;
-        unsigned char sub_path_high;
-        unsigned char sub_path_low;
-        char id[4];
-        char offset[4];
+    unsigned char store_path_index;
+    unsigned char sub_path_high;
+    unsigned char sub_path_low;
+    char id[4];
+    char offset[4];
     char size[4];
 } FDFSTrunkInfoBuff;
 
