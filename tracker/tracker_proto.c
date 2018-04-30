@@ -597,6 +597,7 @@ int fdfs_get_ini_context_from_tracker(TrackerServerGroup *pTrackerGroup, \
     return EINTR;
 }
 
+// 和pTrackerServer通信,获取对应的状态信息,pStatus
 int fdfs_get_tracker_status(ConnectionInfo *pTrackerServer, \
         TrackerRunningStatus *pStatus) {
     char in_buff[1 + 2 * FDFS_PROTO_PKG_LEN_SIZE];

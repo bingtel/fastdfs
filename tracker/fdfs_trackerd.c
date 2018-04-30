@@ -135,6 +135,7 @@ int main(int argc, char *argv[])
 #endif
 
 	memset(bind_addr, 0, sizeof(bind_addr));
+	// 读配置
 	if ((result=tracker_load_from_conf_file(conf_filename, \
 			bind_addr, sizeof(bind_addr))) != 0)
 	{
@@ -143,6 +144,7 @@ int main(int argc, char *argv[])
 		return result;
 	}
 
+	// 读持久化的文件
 	if ((result=tracker_load_status_from_file(&g_tracker_last_status)) != 0)
 	{
 		logCrit("exit abnormally!\n");
@@ -158,6 +160,7 @@ int main(int argc, char *argv[])
 		return result;
 	}
 
+	// 数据结构初始化
 	if ((result=tracker_mem_init()) != 0)
 	{
 		logCrit("exit abnormally!\n");
@@ -189,6 +192,7 @@ int main(int argc, char *argv[])
 		return result;
 	}
 
+	// 服务初始化
 	if ((result=tracker_service_init()) != 0)
 	{
 		logCrit("exit abnormally!\n");
@@ -196,6 +200,7 @@ int main(int argc, char *argv[])
 		return result;
 	}
 	
+	// 信号注册
 	memset(&act, 0, sizeof(act));
 	sigemptyset(&act.sa_mask);
 
@@ -350,6 +355,8 @@ int main(int argc, char *argv[])
 		return result;
 	}
 
+	// 选tracker leader
+	// 设置trunk server
 	if ((result=tracker_relationship_init()) != 0)
 	{
 		logCrit("exit abnormally!\n");

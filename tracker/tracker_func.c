@@ -123,6 +123,7 @@ static int tracker_load_storage_id_info(const char *config_filename, \
 	return fdfs_load_storage_ids_from_file(config_filename, pItemContext);
 }
 
+// 读取配置文件
 int tracker_load_from_conf_file(const char *filename, \
 		char *bind_addr, const int addr_size)
 {

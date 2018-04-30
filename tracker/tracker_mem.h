@@ -127,6 +127,7 @@ void tracker_calc_running_times(TrackerRunningStatus *pStatus);
 // 将groups信息持久化
 int tracker_save_groups();
 
+// 给groups设置trunk server
 void tracker_mem_find_trunk_servers();
 
 #ifdef __cplusplus

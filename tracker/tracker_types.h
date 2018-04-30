@@ -408,7 +408,7 @@ typedef struct
 
 typedef struct
 {
-    int server_count;
+    int server_count;	//	个数
     int server_index;  //server index for roundrobin
     int leader_index;  //leader server index
     ConnectionInfo *servers;
@@ -452,8 +452,8 @@ typedef struct {
 
 typedef struct {
     ConnectionInfo *pTrackerServer;
-    int running_time;     //running seconds, more means higher weight
-    int restart_interval; //restart interval, less mean higher weight
+    int running_time;     //running seconds, more means higher weight, 运行的时间越长,优先级越高
+    int restart_interval; //restart interval, less mean higher weight, 重启的次数越少,优先级越高
     bool if_leader;       //if leader
 } TrackerRunningStatus;
 

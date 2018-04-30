@@ -5031,6 +5031,8 @@ static int tracker_mem_do_set_trunk_server(FDFSGroupInfo *pGroup,
     if (*(pGroup->last_trunk_server_id) != '\0' &&
         strcmp(pTrunkServer->id, pGroup->last_trunk_server_id) != 0)
     {
+		// 删除trunk-binlog同步的状态mark文件
+		// （既然这个TrunkServer是新的，那么就要清除同步trunk-binlog的状态，使其从头同步trunk-binlog给组内的其他Storage
         if ((result=fdfs_deal_no_body_cmd_ex(
             pTrunkServer->ip_addr,
             pGroup->storage_port,
@@ -5059,6 +5061,8 @@ static int tracker_mem_do_set_trunk_server(FDFSGroupInfo *pGroup,
     return 0;
 }
 
+// 为单个的group设置TrunkServer
+// trunk_binlog文件最大的,就是trunk server
 static int tracker_mem_find_trunk_server(FDFSGroupInfo *pGroup,
         const bool save)
 {
@@ -5328,6 +5332,7 @@ int tracker_mem_active_store_server(FDFSGroupInfo *pGroup, \
     return 0;
 }
 
+// 为每个group设置trunk_servers
 void tracker_mem_find_trunk_servers() {
     FDFSGroupInfo **ppGroup;
     FDFSGroupInfo **ppGroupEnd;

@@ -37,9 +37,9 @@ extern "C" {
 #endif
 
 extern volatile bool g_continue_flag;
-extern int g_server_port;
-extern FDFSGroups g_groups;
-extern int g_storage_stat_chg_count;
+extern int g_server_port;	// tracker　server的端口
+extern FDFSGroups g_groups;  // 维护的groups
+extern int g_storage_stat_chg_count;	
 extern int g_storage_sync_time_chg_count; //sync timestamp
 extern int g_max_connections;
 extern int g_min_buff_size;

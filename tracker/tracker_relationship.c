@@ -31,6 +31,11 @@
 
 bool g_if_leader_self = false;  //if I am leader
 
+/** 
+ ** 向Tracker-Leader发送一个TRACKER_PING_LEADER消息，该Tracker将响应一个数组，该数组每个成员为一个结构体如下：
+ ** {group_name，trunk-server-id}
+ ** 通过这个消息可以从Leader中获取每个Group当前的Trunk-Server是哪个
+ **/
 static int fdfs_ping_leader(ConnectionInfo *pTrackerServer) {
     TrackerHeader header;
     int result;
@@ -47,7 +52,8 @@ static int fdfs_ping_leader(ConnectionInfo *pTrackerServer) {
 
     memset(&header, 0, sizeof(header));
     header.cmd = TRACKER_PROTO_CMD_TRACKER_PING_LEADER;
-    # 非阻塞发布送数据
+    // 非阻塞发布送数据
+	// '_nb' 是 'nonblocking'的意思
     result = tcpsenddata_nb(pTrackerServer->sock, &header, \
             sizeof(header), g_fdfs_network_timeout);
     if(result != 0) {
@@ -129,6 +135,7 @@ static int fdfs_ping_leader(ConnectionInfo *pTrackerServer) {
     return 0;
 }
 
+// 最后比较IP
 static int relationship_cmp_tracker_status(const void *p1, const void *p2)
 {
     TrackerRunningStatus *pStatus1;
@@ -201,9 +208,11 @@ static int relationship_get_tracker_leader(TrackerRunningStatus *pTrackerStatus)
         return result == 0 ? ENOENT : result;
     }
 
+	// 升序排列
     qsort(trackerStatus, count, sizeof(TrackerRunningStatus), \
         relationship_cmp_tracker_status);
 
+	// 日志记录所有tracker server的状态信息
     for (i=0; i<count; i++) {
         logDebug("file: "__FILE__", line: %d, " \
             "%s:%d if_leader: %d, running time: %d, " \
@@ -215,6 +224,7 @@ static int relationship_get_tracker_leader(TrackerRunningStatus *pTrackerStatus)
             trackerStatus[i].restart_interval);
     }
 
+	// 返回leader的信息
     memcpy(pTrackerStatus, trackerStatus + (count - 1), \
             sizeof(TrackerRunningStatus));
     return 0;
@@ -326,7 +336,10 @@ static int relationship_notify_leader_changed(ConnectionInfo *pLeader)
     if (success_count == 0) {
         return result;
     }
-
+	// 此时, success_count > 0，只要有一个通知成功了
+	
+	// 下面将通知所有的Tracker（包括自己），将Leader变更成自己;
+	// 只要有一个Tracker返回成功，则表示整个变更成功；（此处通知了自己，那么这个步骤肯定会成功）。
     result = ENOENT;
     success_count = 0;
     for (pTrackerServer=g_tracker_servers.servers; \
@@ -349,6 +362,9 @@ static int relationship_notify_leader_changed(ConnectionInfo *pLeader)
     return 0;
 }
 
+/**
+ ** 选出tracker leader
+ **/
 static int relationship_select_leader()
 {
     int result;
@@ -365,6 +381,7 @@ static int relationship_select_leader()
         return result;
     }
 
+	// 自己就是leader
     if (trackerStatus.pTrackerServer->port == g_server_port && \
         is_local_host_ip(trackerStatus.pTrackerServer->ip_addr)) {
         if ((result=relationship_notify_leader_changed( \
@@ -377,10 +394,12 @@ static int relationship_select_leader()
             "I am the new tracker leader %s:%d", \
             __LINE__, trackerStatus.pTrackerServer->ip_addr, \
             trackerStatus.pTrackerServer->port);
-
+		// 设置TrunkServer
         tracker_mem_find_trunk_servers();
     }
     else {
+		// 若最高状态的Tracker当前就是Leader，
+		// 那么就设置本地标志为g_tracker_servers.leader_index，表示Leader已经确定。
         if (trackerStatus.if_leader) {
             g_tracker_servers.leader_index = \
                 trackerStatus.pTrackerServer - \
@@ -401,7 +420,7 @@ static int relationship_select_leader()
                 trackerStatus.pTrackerServer->ip_addr, \
                 trackerStatus.pTrackerServer->port);
         }
-        else {
+        else {  // 等待真正的Leader发起Leader变更消息
             logDebug("file: "__FILE__", line: %d, " \
                 "waiting for leader notify", __LINE__);
             return ENOENT;
@@ -411,6 +430,7 @@ static int relationship_select_leader()
     return 0;
 }
 
+// 每个tracker向leader发送心跳
 static int relationship_ping_leader() {
     int result;
     int leader_index;
@@ -451,7 +471,7 @@ static void *relationship_thread_entrance(void* arg) {
     while (g_continue_flag) {
         sleep_seconds = 1;
         if (g_tracker_servers.servers != NULL) {
-            if (g_tracker_servers.leader_index < 0) {
+            if (g_tracker_servers.leader_index < 0) {	// 还未设定tracker leader
                 if (relationship_select_leader() != 0) {
                     sleep_seconds = 1 + (int)((double)rand()
                     * (double)MAX_SLEEP_SECONDS / RAND_MAX);
@@ -485,6 +505,7 @@ static void *relationship_thread_entrance(void* arg) {
     return NULL;
 }
 
+// tracker server启动的时候, 执行
 int tracker_relationship_init() {
     int result;
     pthread_t tid;

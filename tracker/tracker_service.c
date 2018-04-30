@@ -52,6 +52,7 @@ static void *work_thread_entrance(void* arg);
 static void wait_for_work_threads_exit();
 static void tracker_find_max_free_space_group();
 
+// tracker服务初始化
 int tracker_service_init() {
 #define ALLOC_CONNECTIONS_ONCE 1024
     int result;
