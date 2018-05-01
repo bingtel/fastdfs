@@ -29,6 +29,7 @@
 extern "C" {
 #endif
 
+// 每个tracker从storage server获取其他的trackers
 extern TrackerServerGroup g_tracker_servers;  //save all tracker servers from storage server
 extern ConnectionInfo *g_last_tracker_servers;  //for delay free
 extern int g_next_leader_index;               //next leader index

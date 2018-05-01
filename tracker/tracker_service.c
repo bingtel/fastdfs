@@ -617,6 +617,7 @@ static int tracker_deal_changelog_req(struct fast_task_info *pTask)
     return tracker_changelog_response(pTask, pStorage);
 }
 
+// 获取group中的current_trunk_file_id
 static int tracker_deal_get_trunk_fid(struct fast_task_info *pTask)
 {
     TrackerClientInfo *pClientInfo;
@@ -748,6 +749,7 @@ static int tracker_deal_storage_replica_chg(struct fast_task_info *pTask)
     }
 }
 
+// trunk server, 上报trunk file信息
 static int tracker_deal_report_trunk_fid(struct fast_task_info *pTask)
 {
     int current_trunk_fid;
@@ -777,7 +779,7 @@ static int tracker_deal_report_trunk_fid(struct fast_task_info *pTask)
             __LINE__, pTask->client_ip, current_trunk_fid);
         return EINVAL;
     }
-
+	// 不是trunk server, 无权上报trunk file信息
     if (pClientInfo->pStorage != pClientInfo->pGroup->pTrunkServer)
     {
         logError("file: "__FILE__", line: %d, " \
@@ -786,6 +788,7 @@ static int tracker_deal_report_trunk_fid(struct fast_task_info *pTask)
         return EINVAL;
     }
 
+	// 更新group的current_trunk_file_id
     if (pClientInfo->pGroup->current_trunk_file_id < current_trunk_fid)
     {
         pClientInfo->pGroup->current_trunk_file_id = current_trunk_fid;
@@ -797,6 +800,7 @@ static int tracker_deal_report_trunk_fid(struct fast_task_info *pTask)
     }
 }
 
+// trunk server 上报trunk file剩余空间; 更新group的trunk file信息
 static int tracker_deal_report_trunk_free_space(struct fast_task_info *pTask)
 {
     int64_t trunk_free_space;
@@ -836,6 +840,7 @@ static int tracker_deal_report_trunk_free_space(struct fast_task_info *pTask)
     }
 
     pClientInfo->pGroup->trunk_free_mb = trunk_free_space;
+	// 找到trunk-file-free-space最大的group
     tracker_find_max_free_space_group();
     return 0;
 }
@@ -974,7 +979,7 @@ static int tracker_deal_commit_next_leader(struct fast_task_info *pTask)
     return 0;
 }
 
-
+// 根据group_name和storage server的IP信息，得到该storge server的FDFSStorageBrief信息
 static int tracker_deal_server_get_storage_status(struct fast_task_info *pTask)
 {
     char group_name[FDFS_GROUP_NAME_MAX_LEN + 1];
@@ -996,9 +1001,11 @@ static int tracker_deal_server_get_storage_status(struct fast_task_info *pTask)
         return EINVAL;
     }
 
+	// 获取group_name
     memcpy(group_name, pTask->data + sizeof(TrackerHeader), \
             FDFS_GROUP_NAME_MAX_LEN);
     *(group_name + FDFS_GROUP_NAME_MAX_LEN) = '\0';
+	// 获取group信息
     pGroup = tracker_mem_get_group(group_name);
     if (pGroup == NULL)
     {
@@ -1011,6 +1018,7 @@ static int tracker_deal_server_get_storage_status(struct fast_task_info *pTask)
 
     if (nPkgLen == FDFS_GROUP_NAME_MAX_LEN)
     {
+		// 获取ip地址
         strcpy(ip_addr, pTask->client_ip);
     }
     else
@@ -1027,6 +1035,7 @@ static int tracker_deal_server_get_storage_status(struct fast_task_info *pTask)
         *(ip_addr + ip_len) = '\0';
     }
 
+	// 得到了storage server对象
     pStorage = tracker_mem_get_storage_by_ip(pGroup, ip_addr);
     if (pStorage == NULL)
     {
@@ -1049,6 +1058,7 @@ static int tracker_deal_server_get_storage_status(struct fast_task_info *pTask)
     return 0;
 }
 
+// 根据group name和storage ip, 获取对应的storage server id
 static int tracker_deal_get_storage_id(struct fast_task_info *pTask)
 {
     char group_name[FDFS_GROUP_NAME_MAX_LEN + 1];
@@ -1121,6 +1131,7 @@ static int tracker_deal_get_storage_id(struct fast_task_info *pTask)
     return 0;
 }
 
+// 根据storage server的IP、端口，获取所属的group name
 static int tracker_deal_get_storage_group_name(struct fast_task_info *pTask)
 {
     char ip_addr[IP_ADDRESS_SIZE];
@@ -1135,7 +1146,7 @@ static int tracker_deal_get_storage_group_name(struct fast_task_info *pTask)
                 "use_storage_id is disabled, can't get group name "
                 "from storage ip and port!", __LINE__);
         pTask->length = sizeof(TrackerHeader);
-        return EOPNOTSUPP;
+        return EOPNOTSUPP; // ERROR OPERATION NOT SUPPORT
     }
 
     nPkgLen = pTask->length - sizeof(TrackerHeader);
@@ -1202,6 +1213,7 @@ static int tracker_deal_fetch_storage_ids(struct fast_task_info *pTask)
     int nPkgLen;
     int start_index;
 
+	// 当前只允许使用IP标记storage server
     if (!g_use_storage_id)
     {
         logError("file: "__FILE__", line: %d, " \
@@ -1433,6 +1445,7 @@ static int tracker_deal_storage_join(struct fast_task_info *pTask)
     p = pTask->data+sizeof(TrackerHeader)+sizeof(TrackerStorageJoinBody);
     pTrackerEnd = joinBody.tracker_servers + \
               joinBody.tracker_count;
+	// 该tracker就感知到了其他tracker的存在
     for (pTrackerServer=joinBody.tracker_servers; \
         pTrackerServer<pTrackerEnd; pTrackerServer++)
     {
@@ -1450,6 +1463,7 @@ static int tracker_deal_storage_join(struct fast_task_info *pTask)
         snprintf(pTrackerServer->ip_addr, \
             sizeof(pTrackerServer->ip_addr), "%s", p);
         pTrackerServer->port = atoi(pSeperator + 1);
+		// 还未初始化
         pTrackerServer->sock = -1;
 
         p += FDFS_PROTO_IP_PORT_SIZE;
@@ -1470,6 +1484,7 @@ static int tracker_deal_storage_join(struct fast_task_info *pTask)
         tracker_ip, IP_ADDRESS_SIZE);
     insert_into_local_host_ip(tracker_ip);
 
+	// 保存group、storage
     result = tracker_mem_add_group_and_storage(pClientInfo, \
             pTask->client_ip, &joinBody, true);
     if (result != 0)
@@ -1668,6 +1683,7 @@ static int tracker_deal_active_test(struct fast_task_info *pTask)
     return 0;
 }
 
+// 返回所有 "group_name -> trunck server id"的映射
 static int tracker_deal_ping_leader(struct fast_task_info *pTask)
 {
     FDFSGroupInfo **ppGroup;
@@ -1677,6 +1693,7 @@ static int tracker_deal_ping_leader(struct fast_task_info *pTask)
     TrackerClientInfo *pClientInfo;
 
     pClientInfo = (TrackerClientInfo *)pTask->arg;
+	// 该消息不包含消息体
     if (pTask->length - sizeof(TrackerHeader) != 0)
     {
         logError("file: "__FILE__", line: %d, " \
@@ -1690,6 +1707,7 @@ static int tracker_deal_ping_leader(struct fast_task_info *pTask)
         return EINVAL;
     }
 
+	// 该tracker并不是leader
     if (!g_if_leader_self)
     {
         logError("file: "__FILE__", line: %d, " \
@@ -2087,6 +2105,7 @@ static int tracker_deal_storage_report_ip_changed(struct fast_task_info *pTask)
     }
 
     pTask->length = sizeof(TrackerHeader);
+	// 决定是否要加入新的storage server
     return tracker_mem_storage_ip_changed(pGroup, \
             pOldIpAddr, pNewIpAddr);
 }
@@ -3774,12 +3793,15 @@ int tracker_deal_task(struct fast_task_info *pTask) {
         case TRACKER_PROTO_CMD_STORAGE_GET_STATUS:
             result = tracker_deal_server_get_storage_status(pTask);
             break;
+		// 根据group name和storage ip, 获取对应的storage server id
         case TRACKER_PROTO_CMD_STORAGE_GET_SERVER_ID:
             result = tracker_deal_get_storage_id(pTask);
             break;
+		// 根据storage server的IP、端口，获取所属的group name
         case TRACKER_PROTO_CMD_STORAGE_GET_GROUP_NAME:
             result = tracker_deal_get_storage_group_name(pTask);
             break;
+		// 获取所有storage server ids
         case TRACKER_PROTO_CMD_STORAGE_FETCH_STORAGE_IDS:
             result = tracker_deal_fetch_storage_ids(pTask);
             break;
@@ -3877,6 +3899,7 @@ int tracker_deal_task(struct fast_task_info *pTask) {
             TRACKER_CHECK_LOGINED(pTask)
             result = tracker_deal_report_trunk_fid(pTask);
             break;
+		// 获取group中的current_trunk_file_id
         case TRACKER_PROTO_CMD_STORAGE_FETCH_TRUNK_FID:
             TRACKER_CHECK_LOGINED(pTask)
             result = tracker_deal_get_trunk_fid(pTask);
@@ -3885,7 +3908,7 @@ int tracker_deal_task(struct fast_task_info *pTask) {
             TRACKER_CHECK_LOGINED(pTask)
             result = tracker_deal_report_trunk_free_space(pTask);
             break;
-        case TRACKER_PROTO_CMD_TRACKER_PING_LEADER:
+        case TRACKER_PROTO_CMD_TRACKER_PING_LEADER:  // tracker 向　leader发送ping, 获取每个group中的trunk server是哪个
             result = tracker_deal_ping_leader(pTask);
             break;
         case TRACKER_PROTO_CMD_TRACKER_NOTIFY_NEXT_LEADER:

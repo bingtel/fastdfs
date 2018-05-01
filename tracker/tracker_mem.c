@@ -3479,6 +3479,7 @@ int tracker_mem_delete_storage(FDFSGroupInfo *pGroup, const char *id)
     return 0;
 }
 
+// 把新的storage server加进来
 int tracker_mem_storage_ip_changed(FDFSGroupInfo *pGroup, \
         const char *old_storage_ip, const char *new_storage_ip)
 {
@@ -3937,6 +3938,7 @@ static int tracker_mem_cmp_tracker_running_status(const void *p1, const void *p2
     return pStatus2->restart_interval - pStatus1->restart_interval;
 }
 
+// 首次添加tracker, 初始化`g_tracker_servers`
 static int tracker_mem_first_add_tracker_servers(FDFSStorageJoinBody *pJoinBody)
 {
     ConnectionInfo *pLocalTracker;
@@ -3990,6 +3992,7 @@ static int tracker_mem_check_add_tracker_servers(FDFSStorageJoinBody *pJoinBody)
             for (pLocalTracker=g_tracker_servers.servers; \
                        pLocalTracker<pLocalEnd; pLocalTracker++)
         {
+			// 已经存在了
             if (pJoinTracker->port == pLocalTracker->port && \
                 strcmp(pJoinTracker->ip_addr, \
                     pLocalTracker->ip_addr) == 0)
@@ -4043,6 +4046,7 @@ static int tracker_mem_check_add_tracker_servers(FDFSStorageJoinBody *pJoinBody)
 
     memcpy(new_servers, g_tracker_servers.servers, sizeof(ConnectionInfo)* \
                 g_tracker_servers.server_count);
+	// 后面新加
     pNewServer = new_servers + g_tracker_servers.server_count;
     for (pJoinTracker=pJoinBody->tracker_servers; \
         pJoinTracker<pJoinEnd; pJoinTracker++)
@@ -4319,6 +4323,7 @@ int tracker_mem_add_group_and_storage(TrackerClientInfo *pClientInfo, \
 
     if (g_use_storage_id)
     {
+		// 获取storage server id
         pStorageIdInfo = fdfs_get_storage_id_by_ip( \
                 pClientInfo->pGroup->group_name, ip_addr);
         if (pStorageIdInfo == NULL)

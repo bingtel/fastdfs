@@ -15,6 +15,7 @@
 #include "connection_pool.h"
 #include "ini_file_reader.h"
 
+// storage服加入到tracker
 #define TRACKER_PROTO_CMD_STORAGE_JOIN              81
 #define FDFS_PROTO_CMD_QUIT                82
 #define TRACKER_PROTO_CMD_STORAGE_BEAT              83  //storage heart beat
@@ -28,17 +29,29 @@
 #define TRACKER_PROTO_CMD_STORAGE_SYNC_REPORT        89
 
 //dest storage query sync src storage server
+
+// storage server的Ip发生了变更
 #define TRACKER_PROTO_CMD_STORAGE_SYNC_DEST_QUERY   79
 #define TRACKER_PROTO_CMD_STORAGE_REPORT_IP_CHANGED 78  //storage server report it's ip changed
+// 从历史文件中,读取变更记录
 #define TRACKER_PROTO_CMD_STORAGE_CHANGELOG_REQ     77  //storage server request storage server's changelog
+// 上报某个group下, 某个storage server的运行状态
 #define TRACKER_PROTO_CMD_STORAGE_REPORT_STATUS     76  //report specified storage server status
+//
 #define TRACKER_PROTO_CMD_STORAGE_PARAMETER_REQ        75  //storage server request parameters
+// trunk server 上报trunk file剩余空间; 更新group的trunk file信息
 #define TRACKER_PROTO_CMD_STORAGE_REPORT_TRUNK_FREE 74  //storage report trunk free space
+// trunk server, 上报trunk file id(递增的整数)
 #define TRACKER_PROTO_CMD_STORAGE_REPORT_TRUNK_FID  73  //storage report current trunk file id
+// 获取group中的current_trunk_file_id
 #define TRACKER_PROTO_CMD_STORAGE_FETCH_TRUNK_FID   72  //storage get current trunk file id
+// 根据group_name和storage server的IP信息，得到该storge server的FDFSStorageBrief信息
 #define TRACKER_PROTO_CMD_STORAGE_GET_STATUS        71  //get storage status from tracker
+// 根据group name和storage ip, 获取对应的storage server id
 #define TRACKER_PROTO_CMD_STORAGE_GET_SERVER_ID        70  //get storage server id from tracker
+// 获取所有storage server ids
 #define TRACKER_PROTO_CMD_STORAGE_FETCH_STORAGE_IDS 69  //get all storage ids from tracker
+// 根据storage server的IP、端口，获取所属的group name
 #define TRACKER_PROTO_CMD_STORAGE_GET_GROUP_NAME   109  //get storage group name from tracker
 
 #define TRACKER_PROTO_CMD_TRACKER_GET_SYS_FILES_START    61  //start of tracker get system data files
@@ -142,6 +155,7 @@ typedef struct
     char domain_name[FDFS_DOMAIN_NAME_MAX_SIZE];
     char init_flag;
     signed char status;
+	// tracker是通过storage来获知其他trackers的存在的
     char tracker_count[FDFS_PROTO_PKG_LEN_SIZE];  //all tracker server count
 } TrackerStorageJoinBody;
 
