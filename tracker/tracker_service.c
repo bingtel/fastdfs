@@ -362,6 +362,7 @@ static int tracker_check_and_sync(struct fast_task_info *pTask, \
     pFlags = p++;
     *pFlags = 0;
     if (g_if_leader_self) {
+        // 说明此时, storage不知道最新的tracker leader是哪个
         if (pClientInfo->chg_count.tracker_leader != g_tracker_leader_chg_count) {
             int leader_index;
 
@@ -387,6 +388,7 @@ static int tracker_check_and_sync(struct fast_task_info *pTask, \
             p = (char *)pDestServer;
         }
 
+        // 此时, storage并不知道同group下最新的trunk server是哪个
         if (pClientInfo->pStorage->trunk_chg_count != \
             pClientInfo->pGroup->trunk_chg_count)
         {
@@ -413,6 +415,7 @@ static int tracker_check_and_sync(struct fast_task_info *pTask, \
             p = (char *)pDestServer;
         }
 
+        // 该storage不知道同group下其它storage的情况
         if (pClientInfo->pStorage->chg_count != pClientInfo->pGroup->chg_count)
         {
             *pFlags |= FDFS_CHANGE_FLAG_GROUP_SERVER;
@@ -3532,6 +3535,7 @@ static int tracker_deal_storage_sync_report(struct fast_task_info *pTask)
     return tracker_check_and_sync(pTask, status);
 }
 
+// 统计storage server中的每个挂载点的使用情况
 static int tracker_deal_storage_df_report(struct fast_task_info *pTask) {
     int nPkgLen;
     int i;

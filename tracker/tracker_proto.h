@@ -19,6 +19,7 @@
 #define TRACKER_PROTO_CMD_STORAGE_JOIN              81
 #define FDFS_PROTO_CMD_QUIT                82
 #define TRACKER_PROTO_CMD_STORAGE_BEAT              83  //storage heart beat
+// 上报磁盘使用情况
 #define TRACKER_PROTO_CMD_STORAGE_REPORT_DISK_USAGE 84  //report disk usage
 #define TRACKER_PROTO_CMD_STORAGE_REPLICA_CHG       85  //repl new storage servers
 #define TRACKER_PROTO_CMD_STORAGE_SYNC_SRC_REQ      86  //src storage require sync
