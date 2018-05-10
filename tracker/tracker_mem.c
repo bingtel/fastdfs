@@ -5250,17 +5250,6 @@ int tracker_mem_active_store_server(FDFSGroupInfo *pGroup, \
         return 0;
     }
 
-    /*
-    if (pTargetServer->status == FDFS_STORAGE_STATUS_DELETED)
-    {
-        logError("file: "__FILE__", line: %d, " \
-            "storage ip: %s already deleted, you can " \
-            "restart the tracker servers to reset.", \
-            __LINE__, pTargetServer->ip_addr);
-        return EAGAIN;
-    }
-    */
-
     pTargetServer->status = FDFS_STORAGE_STATUS_ACTIVE;
 
     ppStorageServer = (FDFSStorageDetail **)bsearch(&pTargetServer, \
@@ -5268,6 +5257,7 @@ int tracker_mem_active_store_server(FDFSGroupInfo *pGroup, \
             pGroup->active_count,   \
             sizeof(FDFSStorageDetail *), \
             tracker_mem_cmp_by_storage_id);
+    // 已经存在了
     if (ppStorageServer != NULL)
     {
         return 0;
@@ -5322,6 +5312,7 @@ int tracker_mem_active_store_server(FDFSGroupInfo *pGroup, \
     if (g_if_leader_self && g_if_use_trunk_file && \
         pGroup->pTrunkServer == NULL)
     {
+        // 指定trunk server
         tracker_mem_find_trunk_server(pGroup, true);
     }
 

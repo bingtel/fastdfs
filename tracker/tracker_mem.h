@@ -15,6 +15,7 @@
 #include <pthread.h>
 #include "tracker_types.h"
 
+// 4个系统文件名
 #define TRACKER_SYS_FILE_COUNT  4
 #define STORAGE_GROUPS_LIST_FILENAME_OLD   "storage_groups.dat"
 #define STORAGE_GROUPS_LIST_FILENAME_NEW   "storage_groups_new.dat"

@@ -2193,6 +2193,7 @@ static int tracker_report_df_stat(ConnectionInfo *pTrackerServer, \
     return tracker_check_response(pTrackerServer, bServerPortChanged);
 }
 
+// storage -> tracker 心跳
 static int tracker_heart_beat(ConnectionInfo *pTrackerServer, \
         int *pstat_chg_sync_count, bool *bServerPortChanged)
 {
