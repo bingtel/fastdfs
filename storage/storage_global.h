@@ -73,7 +73,7 @@ extern int g_max_connections;
 extern int g_accept_threads;
 extern int g_work_threads;
 extern int g_buff_size;
- 
+
 extern bool g_disk_rw_direct;     //if file read / write directly
 extern bool g_disk_rw_separated;  //if disk read / write separated
 extern int g_disk_reader_threads; //disk reader thread count per store base path
@@ -99,7 +99,8 @@ extern int g_sync_wait_usec;
 extern int g_sync_interval; //unit: milliseconds
 extern TimeInfo g_sync_start_time;
 extern TimeInfo g_sync_end_time;
-extern bool g_sync_part_time; //true for part time, false for all time of a day
+// true for part time, false for all time of a day
+extern bool g_sync_part_time;
 extern int g_sync_log_buff_interval; //sync log buff to disk every interval seconds
 extern int g_sync_binlog_buff_interval; //sync binlog buff to disk every interval seconds
 extern int g_write_mark_file_freq;      //write to mark file after sync N files

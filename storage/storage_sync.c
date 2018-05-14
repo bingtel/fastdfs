@@ -182,7 +182,6 @@ static int storage_sync_copy_file(ConnectionInfo *pStorageServer, \
     }
 
     total_send_bytes = 0;
-    //printf("sync create file: %s\n", pRecord->filename);
     do
     {
         int64_t body_len;
@@ -2788,6 +2787,11 @@ static void* storage_sync_thread_entrance(void* arg)
             continue;
         }
 
+        // 初始化StorageBinLogReader reader结构；
+        // 并向tracker发送TRACKER_PROTO_CMD_STORAGE_SYNC_SRC_REQ命令，
+        // 获得reader->need_sync_old和 reader->until_timestamp。
+        // 并打开binlog文件，记录文件描述符无reader->binlog_fd。
+        // 并预读binlog至pReader->binlog_buff.buffer中
         if ((result=storage_reader_init(pStorage, &reader)) != 0)
         {
             logCrit("file: "__FILE__", line: %d, " \
@@ -2820,13 +2824,6 @@ static void* storage_sync_thread_entrance(void* arg)
         getSockIpaddr(storage_server.sock, \
             local_ip_addr, IP_ADDRESS_SIZE);
         insert_into_local_host_ip(local_ip_addr);
-
-        /*
-        //printf("file: "__FILE__", line: %d, " \
-            "storage_server.ip_addr=%s, " \
-            "local_ip_addr: %s\n", \
-            __LINE__, pStorage->ip_addr, local_ip_addr);
-        */
 
         if (is_local_host_ip(pStorage->ip_addr))
         {  //can't self sync to self
