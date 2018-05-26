@@ -5437,6 +5437,7 @@ int tracker_mem_get_storage_by_filename(const byte cmd,FDFS_DOWNLOAD_TYPE_PARAM\
 #ifdef WITH_HTTPD
     if (download_type == FDFS_DOWNLOAD_TYPE_TCP)
     {
+        // 没有活跃的storage server
         if ((*ppGroup)->active_count == 0)
         {
             return ENOENT;
